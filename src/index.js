@@ -1,12 +1,33 @@
-import React from 'react';
+import React, {Fragment} from 'react';
 import ReactDOM from 'react-dom';
+import { BrowserRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import createHistory from 'history/createBrowserHistory';
+import { throttle } from 'lodash';
+import { loadState, saveState } from './utils/localStorage';
+import createStore from './redux/create.js';
+import ApiClient from './helpers/ApiClient';
+
+import getRoutes from './routes';
+
 import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const history = createHistory();
+const client = new ApiClient();
+const persistedState = loadState();
+const store = createStore(history, client, persistedState);
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: http://bit.ly/CRA-PWA
-serviceWorker.unregister();
+store.subscribe(throttle(() => {
+  saveState(store.getState());
+}), 1000);
+
+const Main = () => (
+  <Fragment>
+    <BrowserRouter>
+      {getRoutes(store)}
+    </BrowserRouter>
+  </Fragment>
+)
+ReactDOM.render(<Provider store={store}>
+    <Main />
+  </Provider>, document.getElementById('root'));
