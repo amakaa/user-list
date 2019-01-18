@@ -12,28 +12,34 @@ const initialState = {
   error: '',
   jokes: [],
 };
+const FAVORITES_MAX = 10;
 
 export default function reducer (state = initialState, action = {}) {
   switch (action.type) {
     case ADD_FAVORITE: {
-      if  (state.favorites.length >= 10) {
+      if  (state.favorites.length >= FAVORITES_MAX) {
         return {
           ...state,
-          error: {'name': 'errorCount', 'message': 'Number of favorites cannot exceed 10'},
+          error: [
+            ...state.error,
+            'Number of favorites cannot exceed 10'
+          ],
         }
       }
 
       return {
         ...state,
+        error: '',
         favorites: [...state.favorites, action.result],
       }
     }
     case REMOVE_FAVORITE:
       return {
         ...state,
+        error: '',
         favorites: [
           ...state.favorites.filter(c => { 
-            return c.id !== action.result.id
+            return parseInt(c.id, 10) !== parseInt(action.result.id, 10)
           })
         ],
       }
@@ -42,6 +48,7 @@ export default function reducer (state = initialState, action = {}) {
         ...state,
         loading: true,
         loaded: false,
+        error: '',
       }
     case LOAD_SUCCESS:
       return {
@@ -49,12 +56,13 @@ export default function reducer (state = initialState, action = {}) {
         loading: false,
         loaded: true,
         jokes: action.result.value,
+        error: '',
       }
     case LOAD_FAIL:
       return {
         ...state,
         loading: false,
-        error: action.error.message,
+        error: action.error,
       }
     default:
       return state;
@@ -80,6 +88,7 @@ export function addFavorite(joke, id) {
 }
 
 export function removeFavorite(id) {
+  console.log(id)
   return {
     type: REMOVE_FAVORITE,
     result: { id },

@@ -7,13 +7,12 @@ import JokesList from './containers/JokesList/JokesList.jsx';
 import NotFound from './containers/NotFound/NotFound.js';
 
 export default (store) => {
-  const { auth } = store.getState();
-
-  const PrivateRoute = ({component: Component, path }) => (
-    !auth.user ? (
+  const PrivateRoute = ({component: Component, path }) => {
+    const { auth } = store.getState();
+    return !auth.user ? (
       <Redirect to="/login/"/>
     ) : ( <Route path={path} component={Component} /> )
-  )
+  }
 
   return (
     <div>

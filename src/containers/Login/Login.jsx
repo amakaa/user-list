@@ -1,17 +1,19 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
-import { withRouter } from 'react-router-dom';
-import { debounce } from 'lodash';
-import * as authActions from '../../redux/modules/auth';
-import { validatePassword } from '../../utils/validation';
 
 import TextField from '@material-ui/core/TextField';
-import CustomButton from '../../components/CustomButton/CustomButton.jsx';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+
+import { login } from '../../redux/modules/auth';
+import { validatePassword } from '../../utils/validation';
 
 const styles = require('./Login.scss');
 
-class Login extends Component {
+class Login extends PureComponent {
   constructor(props) {
     super(props);
 
@@ -21,59 +23,59 @@ class Login extends Component {
       password: '',
       error: null,
     };
-
-    this.emitChangeDebounced = debounce(this.emitChangeDebounced, 100)
   }
 
   handleChange = name => event => {
     const { target: { value } } = event;
-    this.emitChangeDebounced(name, value);
+    if (name === 'password') {
+      this.handlePasswordChange(name, value);
+    }
+    if (name === 'username') {
+      this.handleUserNameChange(value);
+    }
   };
 
   handleSubmit = (event) => {
     event.preventDefault();
     const input = this.state.username;
+    const { dispatch, history } = this.props
 
-    this.props.login(input);
-    this.props.history.push("/jokes/");
+    dispatch(login(input));
+    history.push('/jokes/');
     this.setState({
       username: '',
     });
   }
 
-  handlePasswordChange = (name, value) => {
-    this.validatePasswordEntry(name, value);
-  }
-
-  validatePasswordEntry = (name, password) => {
+  handlePasswordChange = (name, password) => {
     const errors = validatePassword(name, password);
 
     this.setState({
       error: errors.password,
       password,
-    })
+    });
   }
 
-  emitChangeDebounced (name, value) {
-    if (name === 'password') {
-      this.handlePasswordChange(name, value);
-    }
-
+  handleUserNameChange = (username) => {
     this.setState({
-      [name]: value,
+      username,
     });
   }
 
   render() {
-    const { user } = this.props;
     const { username, error, password } = this.state;
 
     return (
       <div className={styles.loginPage + ' container'}>
         <Helmet title="Login"/>
-        <h1>Login</h1>
-        {!user &&
-        <div>
+        <Dialog
+          open
+          fullWidth
+          onClose={this.handleClose}
+          aria-labelledby="form-dialog-title"
+        >
+          <DialogTitle id="form-dialog-title">Log in</DialogTitle>
+          <DialogContent>
           <form className="login-form form-inline" onSubmit={this.handleSubmit}>
             <div className="form-group">   
               <TextField
@@ -102,29 +104,27 @@ class Login extends Component {
                 onChange={this.handleChange('password')}
               />
             </div>
-            <CustomButton
-              color="primary"
-              variant="contained"
-              className="btn btn-success"
-              title="Submit"
-              handleClick={this.handleSubmit}
-              disabled={!username || !password || (error && error.length > 0)}
-            />
+
+            <div className="form-group">
+              <Button
+                color="primary"
+                variant="contained"
+                className="btn btn-success"
+                onClick={this.handleSubmit}
+                disabled={!username || !password || (error && error.length > 0)}
+              >
+                Submit
+              </Button>
+            </div>
           </form>
-        </div>
-        }
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }
 }
 
+Login = connect()(Login)
 
 
-Login = connect(globalState => ({
-    user: globalState.auth && globalState.auth.user,
-  }),
-  authActions
-)(Login)
-
-
-export default withRouter(Login);
+export default Login;

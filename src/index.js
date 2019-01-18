@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import createHistory from 'history/createBrowserHistory';
-import { throttle } from 'lodash';
+import throttle from 'lodash/throttle';
 import { loadState, saveState } from './utils/localStorage';
 import createStore from './redux/create.js';
 import ApiClient from './helpers/ApiClient';

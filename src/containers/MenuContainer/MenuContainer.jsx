@@ -9,11 +9,12 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Switch from '@material-ui/core/Switch';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import CustomButton from '../../components/CustomButton/CustomButton.jsx';
 
 import { addFavorite } from '../../redux/modules/jokes';
+import { logout } from '../../redux/modules/auth';
 
 const styles = {
   root: {
@@ -29,14 +30,19 @@ const styles = {
   menuItem: {
     textDecoration: 'none',
     color: '#000000'
+  },
+  switch: {
+    color: '#ffffff',
   }
 };
+const FAVORITES_MAX = 10;
 
 class MenuContainer extends PureComponent {
   state = {
     anchorEl: null,
     checked: false,
-    randomActivated: false,
+    shouldAddToFavorites: false,
+    timeouts: [],
   };
 
   handleClick = event => {
@@ -48,31 +54,78 @@ class MenuContainer extends PureComponent {
   };
 
   handleChange = event => {
-    this.setState({ checked: event.target.checked, randomActivated: !this.state.randomActivated });
+    const { target: { checked } } = event;
+
+    this.setState({ checked });
+    if (checked) {
+      this.setState({ shouldAddToFavorites: true });
+      this.addRandomJokesToFavorites();
+    } else {
+      this.setState({ shouldAddToFavorites: false });
+      this.clearRandomDelay();
+    }
   };
 
   logout = () => {
-    const { logout } = this.props;
-    logout();
+    const { dispatch } = this.props;
+    dispatch(logout());
     this.handleClose();
   }
 
-  dispatchRandomFavorite = () => {
-    const { dispatch, jokes } = this.props;
+  queueRandomJokes = () => {
+    const { jokes } = this.props;
+    const timeouts = [];
 
-    return jokes && jokes.forEach(randomJoke => {
-      console.log(randomJoke)
+    jokes && jokes.forEach((randomJoke, i) => {
       const { joke, id} = randomJoke;
+      const timeout = setTimeout(() =>
+        this.dispatchRandomJokesToFavorites(joke, id), 5000*i);
+
+      timeouts.push(timeout);
+    });
+
+    this.setState({ timeouts })
+  }
+
+  dispatchRandomJokesToFavorites = (joke, id) => {
+    const { dispatch, favorites } = this.props;
+    const { shouldAddToFavorites } = this.state;
+
+    if (shouldAddToFavorites) {
       dispatch(addFavorite(joke, id));
-    })
+    }
+
+    if (favorites.length >= FAVORITES_MAX) {
+      this.setState({ checked: false, shouldAddToFavorites: false });
+      this.clearRandomDelay();
+    }
+  }
+
+  clearRandomDelay = () => {
+    const { timeouts } = this.state;
+
+    timeouts.forEach(function(timer) {
+      clearTimeout(timer);
+    });
   }
 
   addRandomJokesToFavorites = () => {
-    this.dispatchRandomFavorite();
+    const { favorites } = this.props;
+
+    if (favorites.length < FAVORITES_MAX) {
+      this.queueRandomJokes();
+    } else {
+      this.setState({ shouldAddToFavorites: false });
+      this.clearRandomDelay();
+    }
+  }
+
+  componentWillUnMount () {
+    this.clearRandomDelay();
   }
 
   render() {
-    const { classes, auth } = this.props;
+    const { classes, auth, favorites } = this.props;
     const { anchorEl, checked } = this.state;
     const open = Boolean(anchorEl);
 
@@ -89,12 +142,17 @@ class MenuContainer extends PureComponent {
             
             <Fragment>
               {auth.user &&
-                <Switch
-                  value="Add Random Jokes"
-                  checked={checked}
-                  onChange={this.handleChange}
-                  tabIndex={-1}
-                  onClick={this.addRandomJokesToFavorites()}
+                <FormControlLabel
+                  className={classes.switch}
+                  control={
+                    <Switch
+                      checked={checked}
+                      onChange={this.handleChange}
+                      tabIndex={-1}
+                      disabled = {favorites.length >= 10}
+                    />
+                  }
+                  label="Add Random Jokes"
                 />
               }
                 <IconButton
@@ -130,12 +188,13 @@ class MenuContainer extends PureComponent {
                         View Favorites
                       </Link>
                     </MenuItem>
-                    <MenuItem>   
-                      {auth.user &&
-                      <Link to="/login" onClick={this.logout}>
-                      Log Out
-                      </Link>}
-                    </MenuItem>
+                    {auth.user &&
+                      <MenuItem onClick={this.logout}>
+                        <Link to="/login/">
+                          Log Out
+                        </Link>
+                      </MenuItem>
+                    }
                   </Menu>
                 }
             </Fragment>
@@ -153,8 +212,8 @@ MenuContainer.propTypes = {
 MenuContainer = connect(globalState => ({
   auth: globalState.auth,
   jokes: globalState.jokes.jokes,
-})
-)(MenuContainer);
+  favorites: globalState.jokes.favorites,
+}))(MenuContainer);
 
 export default withStyles(styles)(MenuContainer);
 

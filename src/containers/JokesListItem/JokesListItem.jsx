@@ -1,32 +1,31 @@
-import React from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import Switch from '@material-ui/core/Switch';
-import uuidv4 from 'uuid/v4';
 
 import { getFavorites, removeFavorite, addFavorite } from '../../redux/modules/jokes';
+import Checkbox from '@material-ui/core/Checkbox';
 
-class JokesListItem extends React.PureComponent {
+class JokesListItem extends PureComponent {
   constructor(props) {
     super(props);
 
     this.state = {
-      checked: props.favorites && !!props.favorites.find(c =>  c.id === String(props.id))
+      checked: false
     }
     this.handleChange = this.handleChange.bind(this);
     this.addJokesToFavorites = this.addJokesToFavorites.bind(this);
     this.removeJokesFromFavorites = this.removeJokesFromFavorites.bind(this);
   }
 
-  static getDerivedStateFromProps({ favorites, id }, prevState) {
-    if (favorites && !!favorites.find(c =>  c.id === String(id)) !== prevState.checked) {
-      return {
-        checked: !!favorites.find(c =>  c.id === String(id))
-      }
-    }
+  componentDidMount(){
+    const { favorites, id } = this.props;
+    const isJokeInFavorites = favorites &&
+      !!favorites.find(c => parseInt(c.id, 10) === parseInt(id, 10));
 
-    return null;
+    this.setState({
+      checked: isJokeInFavorites,
+    })
   }
 
   handleChange(event) {
@@ -54,11 +53,12 @@ class JokesListItem extends React.PureComponent {
   }
 
   render() {
-    const { id, joke, checked } = this.props;
+    const { id, joke } = this.props;
+    const { checked } = this.state;
 
     return (
-      <ListItem key={uuidv4()}>
-        <Switch
+      <ListItem>
+        <Checkbox
           id={`${id}`}
           value={joke}
           checked={checked}
@@ -73,6 +73,5 @@ class JokesListItem extends React.PureComponent {
 
 JokesListItem = connect(globalState => ({
   favorites: getFavorites(globalState)
-})
-)(JokesListItem);
+}))(JokesListItem);
 export default JokesListItem;
