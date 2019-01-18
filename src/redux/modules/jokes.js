@@ -88,7 +88,6 @@ export function addFavorite(joke, id) {
 }
 
 export function removeFavorite(id) {
-  console.log(id)
   return {
     type: REMOVE_FAVORITE,
     result: { id },

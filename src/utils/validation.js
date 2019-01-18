@@ -32,7 +32,7 @@ export const validatePassword = (name, value) => {
     errors[name] = [...errors[name], `Must be no more than ${MAX} characters`];
   }
 
-  if (intersection(ENUMERATION, valueAsArray.length) > 0) {
+  if (intersection(ENUMERATION, valueAsArray).length > 0) {
     errors[name] = [...errors[name], `Must not be one of: ${ENUMERATION.join(', ')}`];
   }
 

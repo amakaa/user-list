@@ -19,6 +19,7 @@ import { logout } from '../../redux/modules/auth';
 const styles = {
   root: {
     flexGrow: 1,
+    color: '#000000',
   },
   grow: {
     flexGrow: 1,
@@ -29,11 +30,8 @@ const styles = {
   },
   menuItem: {
     textDecoration: 'none',
-    color: '#000000'
+    color: '#000000',
   },
-  switch: {
-    color: '#ffffff',
-  }
 };
 const FAVORITES_MAX = 10;
 
@@ -131,7 +129,7 @@ class MenuContainer extends PureComponent {
 
     return (
       <div className="App">
-        <AppBar position="static">
+        <AppBar position="fixed">
           <Toolbar>
             <IconButton className={classes.menuButton} color="inherit" aria-label="Menu">
               <MenuIcon />
@@ -143,13 +141,13 @@ class MenuContainer extends PureComponent {
             <Fragment>
               {auth.user &&
                 <FormControlLabel
-                  className={classes.switch}
                   control={
                     <Switch
                       checked={checked}
-                      onChange={this.handleChange}
                       tabIndex={-1}
+                      onChange={this.handleChange}
                       disabled = {favorites.length >= 10}
+                      disableRipple
                     />
                   }
                   label="Add Random Jokes"
@@ -190,7 +188,7 @@ class MenuContainer extends PureComponent {
                     </MenuItem>
                     {auth.user &&
                       <MenuItem onClick={this.logout}>
-                        <Link to="/login/">
+                        <Link to="/login/" className={classes.link}>
                           Log Out
                         </Link>
                       </MenuItem>
