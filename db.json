@@ -1,0 +1,50 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Tommy Hilfiger",
+      "gender": "Male",
+      "email": "test@pvh.com",
+      "phone": "+31612345678",
+      "address": [
+        {
+          "number": 7,
+          "street": "Danzigerkade",
+          "city": "Amsterdam",
+          "zipcode": "1234 AB"
+        }
+      ]
+    },
+    {
+      "name": "amaka",
+      "gender": "",
+      "phone": "9777",
+      "address": [
+        {
+          "number": "",
+          "street": "",
+          "city": "",
+          "zipcode": ""
+        }
+      ],
+      "email": "a@ge.com",
+      "createdAt": 1550079926756,
+      "id": 2
+    },
+    {
+      "name": "am",
+      "gender": "",
+      "phone": "2345678",
+      "address": [
+        {
+          "number": "",
+          "street": "",
+          "city": "",
+          "zipcode": ""
+        }
+      ],
+      "email": "am@f.com",
+      "id": 3
+    }
+  ]
+}

@@ -1,14 +1,10 @@
-### `npm start`
+### `npm start or yarn start`
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+This application is build with React and Redux, to manage a user database. It uses a mock server from `json-server` that creates a JSON object based on mock data. CRUD capabilities are possible and managed via the Redux store. React-router is used to manage the routing between the list of user and the form page to add a new user. These can be selected in the menu bar. Material UI is utilized for styling. The server at the root is used to handle the json-server settings and loads a static page, the client is loaded immediately after.
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
-
-### `npm test`
+### `npm test or yarn test`
+Run this command for unit tests
 
 
-### `npm run build`
 
 
