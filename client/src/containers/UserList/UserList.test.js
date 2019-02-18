@@ -8,7 +8,6 @@ import { MemoryRouter } from 'react-router-dom';
 import {
   Table,
   TableBody,
-  Dialog,
 } from '@material-ui/core';
 
 import UserList, { UserItem } from './UserList';
