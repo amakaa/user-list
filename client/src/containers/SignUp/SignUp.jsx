@@ -92,10 +92,9 @@ class SignUp extends PureComponent {
         user: {
           ...this.state.user,
           address: [{
-            ...address,
+            ...address[0],
             [name]: value,
           }],
-          [name]: value
         },
         errors
       });

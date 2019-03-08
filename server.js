@@ -47,14 +47,6 @@ function renderFullPage(html, css) {
 
 app.use(cors());
 
-
-app.use((req, res, next) => {
-  if (req.method === 'POST') {
-    req.body.createdAt = Date.now()
-  }
-  next()
-});
-
 app.use('/api/', router);
 
 app.get('/*', function (req, res) {

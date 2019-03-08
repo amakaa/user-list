@@ -1,40 +1,24 @@
 {
   "users": [
     {
-      "id": 1,
-      "name": "Tommy Hilfiger",
-      "gender": "Male",
-      "email": "test@pvh.com",
-      "phone": "+31612345678",
-      "address": [
-        {
-          "number": 7,
-          "street": "Danzigerkade",
-          "city": "Amsterdam",
-          "zipcode": "1234 AB"
-        }
-      ]
-    },
-    {
       "name": "amaka",
       "gender": "",
-      "phone": "9777",
+      "phone": "1234567",
       "address": [
         {
-          "number": "",
-          "street": "",
-          "city": "",
-          "zipcode": ""
+          "number": "1",
+          "street": "dutch street",
+          "city": "amsterdam",
+          "zipcode": "1234"
         }
       ],
-      "email": "a@ge.com",
-      "createdAt": 1550079926756,
+      "email": "amaka@amaka.com",
       "id": 2
     },
     {
-      "name": "am",
-      "gender": "",
-      "phone": "2345678",
+      "name": "ama",
+      "gender": "Female",
+      "phone": "1234567",
       "address": [
         {
           "number": "",
@@ -43,8 +27,23 @@
           "zipcode": ""
         }
       ],
-      "email": "am@f.com",
+      "email": "me@me.com",
       "id": 3
+    },
+    {
+      "name": "me",
+      "gender": "",
+      "phone": "1234567",
+      "address": [
+        {
+          "number": "",
+          "street": "my street",
+          "city": "amsterdam",
+          "zipcode": ""
+        }
+      ],
+      "email": "me@me.com",
+      "id": 4
     }
   ]
 }
